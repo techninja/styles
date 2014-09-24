@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+
+      img {
+        position: absolute;
+        top: 230px;
+      }
+
+      .comicview {
+        position: absolute;
+        left: 90px;
+      }
+
+      #overlaysrc, #overlay, #overlaydest {
+        background-image: url('http://i.imgur.com/C1Ud819.jpg');
+        width: 186px;
+        height: 186px;
+      }
+
+      #overlaysrc {
+        top: 0;
+
+        transform: scale(0.35);
+        transform-origin: 0% 100%;
+      }
+
+      #overlay {
+        top: 0px;
+        margin-left: 75px;
+      }
+
+      #overlaydest {
+        top: 0px;
+        margin-left: 270px;
+        transform: scale(0.35);
+        transform-origin: 0% 100%;
+      }
+
+      #data {
+        top: 190px;
+        left: 0;
+        width: 500px;
+        padding-left: 1em;
+        text-align: center;
+        font-size: 14px;
+      }
+    </style>
+    <title>10 Styles, 10 characters by Jaakko Seppälä</title>
+  </head>
+  <body>
+    <img src="http://i.imgur.com/C1Ud819.jpg" width="500">
+    <div class="comicview" id="overlaysrc">&nbsp;</div>
+    <div class="comicview" id="overlaydest">&nbsp;</div>
+    <div class="comicview" id="overlay">&nbsp;</div>
+    <div class="comicview" id="data"></div>
+
+
+    <script type="text/javascript">
+      var offset = {x: -18, y: -12};
+      var border = -9;
+      var size = {x: 186, y: 186};
+
+      var artData = [
+        {
+          artist: 'Albert Uderzo',
+          character: 'Asterix',
+          comic: 'Asterix & Obelix'
+        },
+
+        {
+          artist: 'Bill Watterson',
+          character: 'Calvin',
+          comic: 'Calvin and Hobbes'
+        },
+
+        {
+          artist: 'Don Rosa',
+          character: 'Donald Duck',
+          comic: 'Donald Duck'
+        },
+
+        {
+          artist: 'Hergé',
+          character: 'Captain Haddock',
+          comic: 'The Adventures of Tintin'
+        },
+
+        {
+          artist: 'Neal Adams',
+          character: 'Batman',
+          comic: 'Batman'
+        },
+
+        {
+          artist: 'Pertti Jarla',
+          character: 'Heimo Vesa',
+          comic: 'Fingerpori'
+        },
+
+        {
+          artist: 'Hugo Pratt',
+          character: 'Corto Maltese',
+          comic: 'Corto Maltese'
+        },
+
+        {
+          artist: 'Tove Jansson',
+          character: 'Moomin',
+          comic: 'Moomin'
+        },
+
+        {
+          artist: 'Jim Davis',
+          character: 'Garfield',
+          comic: 'Garfield'
+        },
+
+        {
+          artist: 'Charles Schulz',
+          character: 'Lucy',
+          comic: 'Peanuts'
+        }
+      ];
+
+      // Translate the X/y offset into a background image offset
+      function getOffset(x, y) {
+        return {
+          left: offset.x + -(size.x * x) + (border * x),
+          top: offset.y + -(size.y * y) + (border * y)
+        };
+      }
+
+      // Set the view for a given chracter
+      function view(x, y) {
+        // Current one
+        var p = getOffset(x, y);
+        $('#overlay').css('background-position', p.left +'px ' + p.top + 'px');
+
+        // Src
+        p = getOffset(y, y);
+        $('#overlaysrc').css('background-position', p.left +'px ' + p.top + 'px');
+
+
+        // Dest
+        p = getOffset(x, x);
+        $('#overlaydest').css('background-position', p.left +'px ' + p.top + 'px');
+
+        var text = '';
+
+        // Same artist/style
+        if (x == y) {
+          text = '"' + artData[y].character + '"';
+
+          // Not char same as comic? Display both
+          if (artData[y].character != artData[y].comic) {
+            text+= ' from "' + artData[y].comic + '"'
+          }
+
+          text+= ' by ' + artData[y].artist;
+        } else { // Different style
+          text = '"' + artData[y].character + '"';
+
+          // Not char same as comic? Display both
+          if (artData[y].character != artData[y].comic) {
+            text+= ' from "' + artData[y].comic + '"'
+          }
+
+          text+= ' drawn in the style of  "' + artData[x].comic + '"';
+          text+= ' by ' + artData[x].artist;
+        }
+
+        $('#data').text(text);
+      }
+
+      // Set initial view
+      view(0, 0);
+
+      var lastCoord = {x: 0, y: 0};
+      $('img').mousemove(function(e) {
+        var coord = {x: parseInt(e.pageX/500*10), y: parseInt((e.pageY-230)/500*10)};
+
+        if (lastCoord.x !== coord.x || lastCoord.y !== coord.y) {
+          view(coord.x, coord.y);
+          lastCoord.x = coord.x;
+          lastCoord.y = coord.y;
+        }
+
+      });
+    </script>
+  </body>
+</html>
